@@ -2,6 +2,112 @@ import numpy as np
 import ctypes
 import os
 import sys
+import pandas as pd
+import gzip
+import json
+import shutil
+import numpy as np 
+import pandas as pd 
+import os
+import re
+import math
+import time
+import nltk
+import joblib
+import scipy.sparse
+import datetime
+from libmf import mf
+from scipy. sparse import csr_matrix
+from scipy. sparse import coo_matrix
+from nltk.corpus import stopwords
+from collections import Counter
+from nltk.tokenize import RegexpTokenizer
+from nltk.stem import SnowballStemmer
+from nltk.stem import WordNetLemmatizer 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.decomposition import NMF
+from sklearn.linear_model import Lasso,LassoCV,LassoLarsCV
+import warnings; warnings.simplefilter('ignore')
+#%matplotlib auto
+
+userNo = len(np.unique(df.reviewerID)) #使用者總數
+itemNo = len(np.unique(df.asin)) #商品總數
+D = gg #隱含特徵數
+T = 7 #時間點數
+merge = 2 #每幾個時間點合併 
+user_list = np.unique(df.reviewerID) #取出所有不同使用者
+item_list = np.unique(df.asin) #取出所有不同商品
+rating = np.zeros((itemNo, userNo)) #創建矩陣
+user_list = pd.Series(user_list.tolist())
+item_list = pd.Series(item_list.tolist())
+
+df.reviewText = df.reviewText.astype(str)
+
+bow = []
+stop_words = set(stopwords.words('english')) #停用詞
+for i in range(len(df)): #建立包含所有評論內名詞的詞袋
+
+    text= df.reviewText[i].lower()
+    tokenizer = RegexpTokenizer(r'\w+')
+    tokens = nltk.word_tokenize(text)
+    tags = nltk.pos_tag(tokens)
+    lemmatizer = WordNetLemmatizer()
+    nouns = [word for word,pos in tags if (pos == 'NN' or pos == 'NNP' or pos == 'NNS' or pos == 'NNPS')] #留下名詞
+    nouns = [w for w in nouns if not w.lower() in stop_words] #去除停用詞
+    nouns = [w for w in nouns if w.isalpha()] #去除標點符號
+    nouns = [lemmatizer.lemmatize(w) for w in nouns] #詞幹化
+    df.word[i] = nouns
+    bow += nouns
+bow = np.unique(bow) #留下不重複的
+
+i_tfidf = pd.DataFrame() #算I矩陣(TF-IDF)
+for i in range(len(df)):
+    vectorizer = TfidfVectorizer(stop_words='english', vocabulary = bow)
+    tfidf = vectorizer.fit_transform([df.reviewText[i]])
+    result = pd.DataFrame(tfidf.toarray(), columns=vectorizer.vocabulary_)
+    i_tfidf = i_tfidf.append(result, ignore_index=True)
+i_tfidf = np.transpose(i_tfidf)
+
+model = NMF(n_components = D, random_state = 5)
+model.fit(i_tfidf)
+nmf_features = model.transform(i_tfidf)
+h = nmf_features
+w = model.components_
+
+temp = pd.DataFrame(columns = ['asin', 'userID', 'review']) #把同一物品/使用者的評論單詞放在一起變新的評論
+temp.asin = df.asin
+temp.review = df.word
+temp.userID = df.reviewerID
+psiJ = temp.groupby(by = 'asin')['review'].sum() #同物品
+space = ' '
+for i  in range(len(psiJ)):
+    psiJ[i] = space.join(psiJ[i])
+
+psiI = temp.groupby(by = 'userID')['review'].sum() #同使用者
+space = ' '
+for i  in range(len(psiI)):
+    psiI[i] = space.join(psiI[i])
+
+f_item = pd.DataFrame() #算psi的TF-IDF
+for i in range(len(psiJ)):
+    vectorizer = TfidfVectorizer(stop_words='english', vocabulary = bow)
+    tfidf = vectorizer.fit_transform([psiJ[i]])
+    result = pd.DataFrame(tfidf.toarray(), columns=vectorizer.get_feature_names())
+    f_item = f_item.append(result, ignore_index=True)
+
+
+f_user = pd.DataFrame() #算psi的TF-IDF
+for i in range(len(psiI)):
+    vectorizer = TfidfVectorizer(stop_words='english', vocabulary = bow)
+    tfidf = vectorizer.fit_transform([psiI[i]])
+    result = pd.DataFrame(tfidf.toarray(), columns=vectorizer.get_feature_names())
+    f_user = f_user.append(result, ignore_index=True)
+
+v_hat = np.dot(f_item, h) #投射到U_hat和V_hat
+u_hat = np.dot(f_user, h)
+
 
 if "LIBMF_OBJ" in os.environ:
     print("Using compiled .so file specified in LIBMF_OBJ:")
