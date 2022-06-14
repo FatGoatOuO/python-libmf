@@ -417,7 +417,7 @@ class MF(object):
             return LookupError("no model data is saved, try running model.mf_fit(...) first")
         tmp = self.uhat()
         tmp.reshape(self.model.n * self.model.k)
-        out = uhat
+        out = tmp
         out = out.astype(np.float32)
         mf.get_Q(ctypes.c_void_p(out.ctypes.data), ctypes.byref(self.model))
         return out.reshape((self.model.n, self.model.k))
@@ -427,7 +427,7 @@ class MF(object):
             return LookupError("no model data is saved, try running model.mf_fit(...) first")
         tmp = self.vhat()
         tmp.reshape(self.model.m * self.model.k)
-        out = vhat
+        out = tmp
         out = out.astype(np.float32)
         mf.get_P(ctypes.c_void_p(out.ctypes.data), ctypes.byref(self.model))
         return out.reshape((self.model.m, self.model.k))
