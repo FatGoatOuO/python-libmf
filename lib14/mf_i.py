@@ -426,7 +426,7 @@ class MF(object):
         if self.model is None:
             return LookupError("no model data is saved, try running model.mf_fit(...) first")
         tmp = vhat()
-	tmp.reshape(self.model.m * self.model.k)
+        tmp.reshape(self.model.m * self.model.k)
         out = vhat
         out = out.astype(np.float32)
         mf.get_P(ctypes.c_void_p(out.ctypes.data), ctypes.byref(self.model))
