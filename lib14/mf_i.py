@@ -32,10 +32,29 @@ from sklearn.linear_model import Lasso,LassoCV,LassoLarsCV
 import warnings; warnings.simplefilter('ignore')
 #%matplotlib auto
 
+def parse(path):
+  g = gzip.open(path, 'rb')
+  for l in g:
+    yield json.loads(l)
+
+def getDF(path):
+  i = 0
+  df = {}
+  for d in parse(path):
+    df[i] = d
+    i += 1
+  return pd.DataFrame.from_dict(df, orient='index')
+
+#with open('Appliances_5_test', 'rb') as f_in, gzip.open('test.json.gz', 'wb') as f_out:
+  #shutil.copyfileobj(f_in, f_out)
+df = getDF('Software_5.json.gz') #讀檔
+
+df.insert(df.shape[1], 'word', 0) # 增加一欄位用以儲存評論之名詞
+
 userNo = len(np.unique(df.reviewerID)) #使用者總數
 itemNo = len(np.unique(df.asin)) #商品總數
-D = gg #隱含特徵數
-T = 7 #時間點數
+D = 29 #隱含特徵數
+T = 36 #時間點數
 merge = 2 #每幾個時間點合併 
 user_list = np.unique(df.reviewerID) #取出所有不同使用者
 item_list = np.unique(df.asin) #取出所有不同商品
