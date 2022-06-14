@@ -190,7 +190,7 @@ class MF(object):
     def q_factors(self):
         if self.model is None:
             return LookupError("no model data is saved, try running model.mf_fit(...) first")
-        out = np.ones(self.model.n * self.model.k)
+        out = np.ones(self.model.k * self.model.k)
         out = out.astype(np.float32)
         mf.get_Q(ctypes.c_void_p(out.ctypes.data), ctypes.byref(self.model))
         return out.reshape((self.model.n, self.model.k))
