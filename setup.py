@@ -9,7 +9,7 @@ def gen_test_suite():
 
 
 setup(name='libmf',
-      packages=['libmf'],
+      packages=['lib13'],
       version='0.9.2',
       test_suite='setup.gen_test_suite',
       description='python bindings to libmf',
