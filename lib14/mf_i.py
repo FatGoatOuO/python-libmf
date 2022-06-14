@@ -47,7 +47,7 @@ def getDF(path):
 
 #with open('Appliances_5_test', 'rb') as f_in, gzip.open('test.json.gz', 'wb') as f_out:
   #shutil.copyfileobj(f_in, f_out)
-df = getDF('Software_5.json.gz') #讀檔
+df = getDF('Appliances_5.json.gz') #讀檔
 
 df.insert(df.shape[1], 'word', 0) # 增加一欄位用以儲存評論之名詞
 
