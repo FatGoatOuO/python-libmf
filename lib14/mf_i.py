@@ -415,7 +415,8 @@ class MF(object):
     def q_factors(self):
         if self.model is None:
             return LookupError("no model data is saved, try running model.mf_fit(...) first")
-        uhat = uhat.reshape(self.model.n * self.model.k)
+        tmp = uhat()
+        tmp.reshape(self.model.n * self.model.k)
         out = uhat
         out = out.astype(np.float32)
         mf.get_Q(ctypes.c_void_p(out.ctypes.data), ctypes.byref(self.model))
@@ -424,7 +425,8 @@ class MF(object):
     def p_factors(self):
         if self.model is None:
             return LookupError("no model data is saved, try running model.mf_fit(...) first")
-        vhat = vhat.reshape(self.model.m * self.model.k)
+        tmp = vhat()
+	tmp.reshape(self.model.m * self.model.k)
         out = vhat
         out = out.astype(np.float32)
         mf.get_P(ctypes.c_void_p(out.ctypes.data), ctypes.byref(self.model))
