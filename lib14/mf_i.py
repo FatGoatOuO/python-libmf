@@ -79,6 +79,8 @@ def get_default_options():
     options = [
         ("fun", ctypes.c_int, P_L2_MFR),
         ("k", ctypes.c_int, 8),
+        ("T", ctypes.c_int, 8),
+        ("mm", ctypes.c_int, 8),
         ("nr_threads", ctypes.c_int, 12),
         ("nr_bins", ctypes.c_int, 26),
         ("nr_iters", ctypes.c_int, 20),
@@ -99,6 +101,8 @@ class MFModel(ctypes.Structure):
                 ("m", ctypes.c_int),
                 ("n", ctypes.c_int),
                 ("k", ctypes.c_int),
+                ("T", ctypes.c_int),
+                ("mm", ctypes.c_int),
                 ("b", ctypes.c_float),
                 ("P", c_float_p),
                 ("Q", c_float_p)]
@@ -134,9 +138,9 @@ class MF(object):
 
         userNo = len(np.unique(df.reviewerID)) #使用者總數
         itemNo = len(np.unique(df.asin)) #商品總數
-        D = 29 #隱含特徵數
-        T = 36 #時間點數
-        merge = 2 #每幾個時間點合併 
+        D = k #隱含特徵數
+        T = T #時間點數
+        merge = mm #每幾個時間點合併 
         user_list = np.unique(df.reviewerID) #取出所有不同使用者
         item_list = np.unique(df.asin) #取出所有不同商品
         rating = np.zeros((itemNo, userNo)) #創建矩陣
@@ -231,9 +235,9 @@ class MF(object):
 
         userNo = len(np.unique(df.reviewerID)) #使用者總數
         itemNo = len(np.unique(df.asin)) #商品總數
-        D = 29 #隱含特徵數
-        T = 36 #時間點數
-        merge = 2 #每幾個時間點合併 
+        D = k #隱含特徵數
+        T = T #時間點數
+        merge = mm #每幾個時間點合併 
         user_list = np.unique(df.reviewerID) #取出所有不同使用者
         item_list = np.unique(df.asin) #取出所有不同商品
         rating = np.zeros((itemNo, userNo)) #創建矩陣
@@ -325,6 +329,10 @@ class MF(object):
                 self._options.fun = ctypes.c_int(value)
             elif item[0] is "k":
                 self._options.k = ctypes.c_int(value)
+            elif item[0] is "T":
+                self._options.T = ctypes.c_int(value)
+            elif item[0] is "mm":
+                self._options.mm = ctypes.c_int(value)
             elif item[0] is "nr_threads":
                 self._options.nr_threads = ctypes.c_int(value)
             elif item[0] is "nr_bins":
