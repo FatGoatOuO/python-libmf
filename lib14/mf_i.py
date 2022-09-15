@@ -126,7 +126,7 @@ class MF(object):
             i += 1
           return pd.DataFrame.from_dict(df, orient='index')
 
-        with open('Digital_Music_5_test.json', 'rb') as f_in, gzip.open('test.json.gz', 'wb') as f_out:
+        with open('Office_Products_5_test.json', 'rb') as f_in, gzip.open('test.json.gz', 'wb') as f_out:
           shutil.copyfileobj(f_in, f_out)
         df = getDF('test.json.gz') #讀檔
 
@@ -222,7 +222,7 @@ class MF(object):
             i += 1
           return pd.DataFrame.from_dict(df, orient='index')
 
-        with open('Digital_Music_5_test.json', 'rb') as f_in, gzip.open('test.json.gz', 'wb') as f_out:
+        with open('Office_Products_5_test.json', 'rb') as f_in, gzip.open('test.json.gz', 'wb') as f_out:
           shutil.copyfileobj(f_in, f_out)
         df = getDF('test.json.gz') #讀檔
 
