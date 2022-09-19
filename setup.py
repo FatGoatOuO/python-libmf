@@ -8,8 +8,8 @@ def gen_test_suite():
     return test_suite
 
 
-setup(name='lib-gift5',
-      packages=['lib-gift5'],
+setup(name='lib-app5',
+      packages=['lib-app5'],
       version='0.9.2',
       test_suite='setup.gen_test_suite',
       description='python bindings to libmf',
