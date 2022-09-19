@@ -8,8 +8,8 @@ def gen_test_suite():
     return test_suite
 
 
-setup(name='lib-mag5',
-      packages=['lib-mag5'],
+setup(name='lib-ama5',
+      packages=['lib-ama5'],
       version='0.9.2',
       test_suite='setup.gen_test_suite',
       description='python bindings to libmf',
