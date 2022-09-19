@@ -8,8 +8,8 @@ def gen_test_suite():
     return test_suite
 
 
-setup(name='lib14',
-      packages=['lib14'],
+setup(name='lib15',
+      packages=['lib15'],
       version='0.9.2',
       test_suite='setup.gen_test_suite',
       description='python bindings to libmf',
